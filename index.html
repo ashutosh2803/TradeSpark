@@ -2,25 +2,28 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Include Font Awesome CSS -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
     <title>Trade Spark</title>
     <style>
-      div{
+      div {
         text-align: center;
       }
-      .credits{
+      .credits {
         width: 11%;
         margin: 0% auto;
       }
-      .social-icons{
+      .social-icons {
         font-size: 30px;
       }
     </style>
   </head>
   <body>
-    <div><img src="./header.png" alt="header"/></div>
+    <div><img src="./header.png" alt="header" /></div>
     <!-- TradingView TickerTape START -->
     <div class="tradingview-widget-container">
       <div class="tradingview-widget-container__widget"></div>
@@ -65,7 +68,7 @@
       </script>
     </div>
     <!-- TradingView Widget END -->
-    <div style="display: flex; flex-wrap: wrap">
+    <div style="display: flex; flex-wrap: wrap; width: 100%; margin: auto; justify-content: space-between; align-items: center;">
       <!-- TradingView Widget BEGIN -->
       <div class="tradingview-widget-container">
         <div class="tradingview-widget-container__widget"></div>
@@ -164,20 +167,21 @@
           src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js"
           async
         >
-            {
-            "width": "600",
-            "height": "620",
-            "symbol": "BSE:SENSEX",
-            "interval": "D",
-            "timezone": "Asia/Kolkata",
-            "theme": "dark",
-            "style": "1",
-            "locale": "en",
-            "enable_publishing": false,
-            "hide_side_toolbar": false,
-            "allow_symbol_change": true,
-            "calendar": false,
-            "support_host": "https://www.tradingview.com"
+          {
+              "width": "600",
+              "height": "620",
+              "symbol": "BSE:SENSEX",
+              "interval": "D",
+              "timezone": "Asia/Kolkata",
+              "theme": "dark",
+              "style": "1",
+              "locale": "en",
+              "enable_publishing": false,
+              "withdateranges": true,
+              "hide_side_toolbar": false,
+              "allow_symbol_change": true,
+              "calendar": false,
+              "support_host": "https://www.tradingview.com"
           }
         </script>
       </div>
@@ -221,7 +225,7 @@
             "isTransparent": false,
             "showSymbolLogo": false,
             "showFloatingTooltip": false,
-            "width": "480",
+            "width": "483",
             "height": "620",
             "plotLineColorGrowing": "rgba(41, 98, 255, 1)",
             "plotLineColorFalling": "rgba(41, 98, 255, 1)",
@@ -246,16 +250,30 @@
       >
     </div>
     <footer>
-        <div class="credits">
-          <div style="display: flex; justify-content: space-around; align-items: center;">
-            <h4>&copy; Ashutosh Kumar</h4>
-            <a href="https://ashutoshkumarportfolio.netlify.app/" target="_blank"><i class="fas fa-arrow-right"></i></a>
-          </div>
-          <div class="social-icons">
-            <a href="https://github.com/ashutosh2803" target="_blank"><i class="fab fa-github"></i></a>
-            <a href="https://www.linkedin.com/in/ashutoshkumar2803/" target="_blank"><i class="fab fa-linkedin"></i></a>
-          </div>
+      <div class="credits">
+        <div
+          style="
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+          "
+        >
+          <h4>&copy; Ashutosh Kumar</h4>
+          <a href="https://ashutoshkumarportfolio.netlify.app/" target="_blank"
+            ><i class="fas fa-arrow-right"></i
+          ></a>
         </div>
-      </footer>      
+        <div class="social-icons">
+          <a href="https://github.com/ashutosh2803" target="_blank"
+            ><i class="fab fa-github"></i
+          ></a>
+          <a
+            href="https://www.linkedin.com/in/ashutoshkumar2803/"
+            target="_blank"
+            ><i class="fab fa-linkedin"></i
+          ></a>
+        </div>
+      </div>
+    </footer>
   </body>
 </html>

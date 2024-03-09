@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Include Font Awesome CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <title>Trade Spark</title>
+    <style>
+      div{
+        text-align: center;
+      }
+      .credits{
+        width: 11%;
+        margin: 0% auto;
+      }
+      .social-icons{
+        font-size: 30px;
+      }
+    </style>
+  </head>
+  <body>
+    <div><img src="./header.png" alt="header"/></div>
+    <!-- TradingView TickerTape START -->
+    <div class="tradingview-widget-container">
+      <div class="tradingview-widget-container__widget"></div>
+      <script
+        type="text/javascript"
+        src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js"
+        async
+      >
+          {
+          "symbols": [
+            {
+              "description": "",
+              "proName": "BSE:SENSEX"
+            },
+            {
+              "description": "",
+              "proName": "NSE:NIFTY"
+            },
+            {
+              "description": "",
+              "proName": "NSE:BANKNIFTY"
+            },
+            {
+              "description": "",
+              "proName": "INDEX:BTCUSD"
+            },
+            {
+              "description": "",
+              "proName": "TVC:DXY"
+            },
+            {
+              "description": "",
+              "proName": "SP:SPX"
+            }
+          ],
+          "showSymbolLogo": true,
+          "isTransparent": false,
+          "displayMode": "adaptive",
+          "colorTheme": "dark",
+          "locale": "en"
+        }
+      </script>
+    </div>
+    <!-- TradingView Widget END -->
+    <div style="display: flex; flex-wrap: wrap">
+      <!-- TradingView Widget BEGIN -->
+      <div class="tradingview-widget-container">
+        <div class="tradingview-widget-container__widget"></div>
+        <script
+          type="text/javascript"
+          src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js"
+          async
+        >
+            {
+            "symbol": "BSE:SENSEX",
+            "width": 350,
+            "height": 220,
+            "locale": "en",
+            "dateRange": "12M",
+            "colorTheme": "dark",
+            "isTransparent": false,
+            "autosize": false,
+            "largeChartUrl": ""
+          }
+        </script>
+      </div>
+      <!-- TradingView Widget END -->
+      <!-- TradingView Widget BEGIN -->
+      <div class="tradingview-widget-container">
+        <div class="tradingview-widget-container__widget"></div>
+        <script
+          type="text/javascript"
+          src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js"
+          async
+        >
+            {
+            "symbol": "BSE:BANK",
+            "width": 350,
+            "height": 220,
+            "locale": "en",
+            "dateRange": "12M",
+            "colorTheme": "dark",
+            "isTransparent": false,
+            "autosize": false,
+            "largeChartUrl": ""
+          }
+        </script>
+      </div>
+      <!-- TradingView Widget END -->
+      <!-- TradingView Widget BEGIN -->
+      <div class="tradingview-widget-container">
+        <div class="tradingview-widget-container__widget"></div>
+        <script
+          type="text/javascript"
+          src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js"
+          async
+        >
+            {
+            "symbol": "INDEX:BTCUSD",
+            "width": 350,
+            "height": 220,
+            "locale": "en",
+            "dateRange": "12M",
+            "colorTheme": "dark",
+            "isTransparent": false,
+            "autosize": false,
+            "largeChartUrl": ""
+          }
+        </script>
+      </div>
+      <!-- TradingView Widget END -->
+      <!-- TradingView Widget BEGIN -->
+      <div class="tradingview-widget-container">
+        <div class="tradingview-widget-container__widget"></div>
+        <script
+          type="text/javascript"
+          src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js"
+          async
+        >
+            {
+            "symbol": "CAPITALCOM:UK100",
+            "width": 350,
+            "height": 220,
+            "locale": "en",
+            "dateRange": "12M",
+            "colorTheme": "dark",
+            "isTransparent": false,
+            "autosize": false,
+            "largeChartUrl": ""
+          }
+        </script>
+      </div>
+      <!-- TradingView Widget END -->
+    </div>
+    <div style="display: flex; flex-wrap: wrap">
+      <!-- TradingView AdvancedChart BEGIN -->
+      <div class="tradingview-widget-container">
+        <div class="tradingview-widget-container__widget"></div>
+        <script
+          type="text/javascript"
+          src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js"
+          async
+        >
+            {
+            "width": "600",
+            "height": "620",
+            "symbol": "BSE:SENSEX",
+            "interval": "D",
+            "timezone": "Asia/Kolkata",
+            "theme": "dark",
+            "style": "1",
+            "locale": "en",
+            "enable_publishing": false,
+            "hide_side_toolbar": false,
+            "allow_symbol_change": true,
+            "calendar": false,
+            "support_host": "https://www.tradingview.com"
+          }
+        </script>
+      </div>
+      <!-- TradingView Widget END -->
+      <!-- TradingView Top Stories BEGIN -->
+      <div class="tradingview-widget-container">
+        <div class="tradingview-widget-container__widget"></div>
+        <script
+          type="text/javascript"
+          src="https://s3.tradingview.com/external-embedding/embed-widget-timeline.js"
+          async
+        >
+            {
+            "feedMode": "market",
+            "market": "index",
+            "isTransparent": false,
+            "displayMode": "regular",
+            "width": 420,
+            "height": 620,
+            "colorTheme": "dark",
+            "locale": "en"
+          }
+        </script>
+      </div>
+      <!-- TradingView Widget END -->
+      <!-- TradingView Widget BEGIN -->
+      <div class="tradingview-widget-container">
+        <div class="tradingview-widget-container__widget"></div>
+        <script
+          type="text/javascript"
+          src="https://s3.tradingview.com/external-embedding/embed-widget-hotlists.js"
+          async
+        >
+            {
+            "colorTheme": "dark",
+            "dateRange": "12M",
+            "exchange": "BSE",
+            "showChart": true,
+            "locale": "en",
+            "largeChartUrl": "",
+            "isTransparent": false,
+            "showSymbolLogo": false,
+            "showFloatingTooltip": false,
+            "width": "480",
+            "height": "620",
+            "plotLineColorGrowing": "rgba(41, 98, 255, 1)",
+            "plotLineColorFalling": "rgba(41, 98, 255, 1)",
+            "gridLineColor": "rgba(42, 46, 57, 0)",
+            "scaleFontColor": "rgba(134, 137, 147, 1)",
+            "belowLineFillColorGrowing": "rgba(41, 98, 255, 0.12)",
+            "belowLineFillColorFalling": "rgba(41, 98, 255, 0.12)",
+            "belowLineFillColorGrowingBottom": "rgba(41, 98, 255, 0)",
+            "belowLineFillColorFallingBottom": "rgba(41, 98, 255, 0)",
+            "symbolActiveColor": "rgba(41, 98, 255, 0.12)"
+          }
+        </script>
+      </div>
+      <!-- TradingView Widget END -->
+    </div>
+    <div class="tradingview-widget-copyright">
+      <a
+        href="https://www.tradingview.com/"
+        rel="noopener nofollow"
+        target="_blank"
+        ><span class="blue-text">Track all markets on TradingView</span></a
+      >
+    </div>
+    <footer>
+        <div class="credits">
+          <div style="display: flex; justify-content: space-around; align-items: center;">
+            <h4>&copy; Ashutosh Kumar</h4>
+            <a href="https://ashutoshkumarportfolio.netlify.app/" target="_blank"><i class="fas fa-arrow-right"></i></a>
+          </div>
+          <div class="social-icons">
+            <a href="https://github.com/ashutosh2803" target="_blank"><i class="fab fa-github"></i></a>
+            <a href="https://www.linkedin.com/in/ashutoshkumar2803/" target="_blank"><i class="fab fa-linkedin"></i></a>
+          </div>
+        </div>
+      </footer>      
+  </body>
+</html>

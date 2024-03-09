@@ -1,4 +1,6 @@
-# Trade Spark - Simple tools, smarter trading with Smarter decisions, brighter future
+# Trade Spark
+### Simple tools, smarter trading with Smarter decisions, brighter future
+
 ---
 ## Running the app
 

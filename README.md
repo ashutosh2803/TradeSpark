@@ -14,8 +14,6 @@
 To run the app locally, 
 
 1.  download the repository in your pc locally.
-2.  run these commands
-    ### `npm install`
-    ### `npm start`
+2.  run index.html in your preffered browser.
 
 If you liked my work, please give a star!⭐️

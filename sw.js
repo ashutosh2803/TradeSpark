@@ -1,4 +1,4 @@
-const CACHE_NAME = "tradespark-v2";
+const CACHE_NAME = "tradespark-v3";
 const PRECACHE_URLS = [
   "./index.html",
   "./manifest.json",
@@ -41,6 +41,11 @@ self.addEventListener("fetch", (event) => {
 
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) {
+    return;
+  }
+
+  if (url.pathname.startsWith("/api/")) {
+    event.respondWith(fetch(request));
     return;
   }
 

@@ -209,6 +209,175 @@
         color: var(--muted);
       }
 
+      .watchlist-head {
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .watchlist-form {
+        display: flex;
+        gap: 8px;
+        flex: 1;
+        min-width: min(100%, 280px);
+        max-width: 460px;
+      }
+
+      .watchlist-form input {
+        flex: 1;
+        min-width: 0;
+        min-height: 44px;
+        border: 1px solid var(--border);
+        background: var(--surface);
+        color: var(--text);
+        border-radius: 999px;
+        padding: 0 16px;
+        font: inherit;
+        font-size: 15px;
+      }
+
+      .watchlist-form input:focus {
+        outline: 2px solid var(--accent);
+        outline-offset: 1px;
+      }
+
+      .watchlist-form button {
+        min-height: 44px;
+        border: 1px solid var(--border);
+        background: var(--surface-2);
+        color: var(--text);
+        border-radius: 999px;
+        padding: 0 16px;
+        font: inherit;
+        font-size: 14px;
+        cursor: pointer;
+        white-space: nowrap;
+      }
+
+      .watchlist-form button:hover {
+        border-color: var(--accent);
+      }
+
+      .watchlist-chips {
+        grid-column: 1 / -1;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .watchlist-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        min-height: 40px;
+        padding: 0 6px 0 12px;
+        border: 1px solid var(--border);
+        background: var(--surface);
+        color: var(--text);
+        border-radius: 999px;
+        font-size: 13px;
+      }
+
+      .watchlist-chip button {
+        width: 32px;
+        height: 32px;
+        border: 0;
+        border-radius: 50%;
+        background: var(--surface-2);
+        color: var(--muted);
+        cursor: pointer;
+        font-size: 18px;
+        line-height: 1;
+      }
+
+      .watchlist-empty {
+        grid-column: 1 / -1;
+        margin: 0;
+        padding: 20px;
+        color: var(--muted);
+        font-size: 14px;
+        text-align: center;
+      }
+
+      #watchlist-quotes {
+        grid-column: 1 / -1;
+        min-height: 0;
+        overflow: auto;
+      }
+
+      #watchlist-quotes.is-empty {
+        display: none;
+      }
+
+      .watchlist-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
+      }
+
+      .watchlist-table th,
+      .watchlist-table td {
+        padding: 12px 14px;
+        text-align: left;
+        border-bottom: 1px solid var(--border);
+        white-space: nowrap;
+      }
+
+      .watchlist-table th {
+        font-size: 11px;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: var(--muted);
+        font-weight: 600;
+      }
+
+      .watchlist-table tr:last-child td {
+        border-bottom: 0;
+      }
+
+      .watchlist-name {
+        font-weight: 600;
+      }
+
+      .watchlist-meta {
+        display: block;
+        margin-top: 2px;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 400;
+      }
+
+      .watchlist-up {
+        color: var(--tv-widget-positive-color);
+      }
+
+      .watchlist-down {
+        color: var(--tv-widget-negative-color);
+      }
+
+      .watchlist-spark {
+        width: 120px;
+        height: 36px;
+        display: block;
+      }
+
+      .watchlist-status {
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      @media (max-width: 800px) {
+        .watchlist-table th:nth-child(4),
+        .watchlist-table td:nth-child(4),
+        .watchlist-table th:nth-child(5),
+        .watchlist-table td:nth-child(5) {
+          display: none;
+        }
+
+        .watchlist-spark {
+          width: 72px;
+        }
+      }
+
       .card {
         background: var(--surface);
         border: 1px solid var(--border);
@@ -345,6 +514,10 @@
           grid-column: 1 / -1;
         }
 
+        .watchlist-form {
+          max-width: none;
+        }
+
         #advanced-chart,
         #top-stories {
           height: 480px;
@@ -387,6 +560,29 @@
         <section class="card mini-card" id="mini-uk100"></section>
       </div>
 
+      <div class="section-head watchlist-head">
+        <h2>Watchlist</h2>
+        <form class="watchlist-form" id="watchlist-form">
+          <input
+            id="watchlist-input"
+            type="text"
+            inputmode="text"
+            autocomplete="off"
+            autocapitalize="characters"
+            spellcheck="false"
+            enterkeyhint="done"
+            placeholder="Add stock, e.g. RELIANCE or NASDAQ:AAPL"
+            aria-label="Stock symbol"
+          />
+          <button type="submit">Add</button>
+        </form>
+      </div>
+      <div class="watchlist-chips" id="watchlist-chips"></div>
+      <p class="watchlist-empty card" id="watchlist-empty" hidden>
+        Add symbols to track live price, change, and sparkline action. Bare tickers default to NSE.
+      </p>
+      <section class="card span-all" id="watchlist-quotes"></section>
+
       <div class="section-head">
         <h2>Chart &amp; news</h2>
       </div>
@@ -411,7 +607,7 @@
     </main>
 
     <footer>
-      <p>Trade Spark · Market data by TradingView</p>
+      <p>Trade Spark · Charts by TradingView · Watchlist quotes via Yahoo Finance</p>
       <div class="footer-links">
         <a
           href="https://www.tradingview.com/"
@@ -424,6 +620,13 @@
 
     <script>
       const THEME_KEY = "ts-theme";
+      const WATCHLIST_KEY = "ts-watchlist";
+      const DEFAULT_WATCHLIST = [
+        { name: "NSE:RELIANCE", displayName: "RELIANCE" },
+        { name: "NSE:TCS", displayName: "TCS" },
+        { name: "NSE:HDFCBANK", displayName: "HDFCBANK" },
+        { name: "NSE:INFY", displayName: "INFY" },
+      ];
 
       function getTheme() {
         return document.documentElement.dataset.theme === "light" ? "light" : "dark";
@@ -619,11 +822,300 @@
         });
       }
 
+      function loadWatchlist() {
+        try {
+          const raw = localStorage.getItem(WATCHLIST_KEY);
+          if (!raw) {
+            saveWatchlist(DEFAULT_WATCHLIST);
+            return DEFAULT_WATCHLIST.slice();
+          }
+          const parsed = JSON.parse(raw);
+          if (!Array.isArray(parsed)) {
+            return DEFAULT_WATCHLIST.slice();
+          }
+          return parsed
+            .map(function (item) {
+              if (typeof item === "string") {
+                return normalizeSymbol(item);
+              }
+              if (item && typeof item.name === "string") {
+                return normalizeSymbol(item.name);
+              }
+              return null;
+            })
+            .filter(Boolean);
+        } catch (error) {
+          return DEFAULT_WATCHLIST.slice();
+        }
+      }
+
+      function saveWatchlist(list) {
+        localStorage.setItem(WATCHLIST_KEY, JSON.stringify(list));
+      }
+
+      function normalizeSymbol(raw) {
+        let value = String(raw || "")
+          .trim()
+          .toUpperCase()
+          .replace(/\s+/g, "");
+        if (!value) {
+          return null;
+        }
+        if (!value.includes(":")) {
+          value = "NSE:" + value;
+        }
+        if (!/^[A-Z0-9_./-]+:[A-Z0-9._^!/-]+$/.test(value)) {
+          return null;
+        }
+        return { name: value, displayName: value.split(":")[1] };
+      }
+
+      function renderWatchlistChips(list) {
+        const chips = document.getElementById("watchlist-chips");
+        const empty = document.getElementById("watchlist-empty");
+        chips.innerHTML = "";
+        empty.hidden = list.length > 0;
+        list.forEach(function (item, index) {
+          const chip = document.createElement("div");
+          chip.className = "watchlist-chip";
+          const label = document.createElement("span");
+          label.textContent = item.name;
+          const remove = document.createElement("button");
+          remove.type = "button";
+          remove.setAttribute("aria-label", "Remove " + item.name);
+          remove.textContent = "×";
+          remove.addEventListener("click", function () {
+            const next = loadWatchlist().filter(function (_, i) {
+              return i !== index;
+            });
+            saveWatchlist(next);
+            refreshWatchlist();
+          });
+          chip.append(label, remove);
+          chips.append(chip);
+        });
+      }
+
+      function escapeHtml(value) {
+        return String(value)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+
+      function toYahooSymbol(item) {
+        const name = item.name;
+        const mapped = {
+          "NSE:NIFTY": "^NSEI",
+          "NSE:NIFTY50": "^NSEI",
+          "NSE:BANKNIFTY": "^NSEBANK",
+          "NSE:CNXMIDCAP": "^NSEMDCP50",
+          "BSE:SENSEX": "^BSESN",
+          "BSE:BANK": "BSE-BANK.BO",
+          "SP:SPX": "^GSPC",
+          "TVC:DXY": "DX-Y.NYB",
+          "INDEX:BTCUSD": "BTC-USD",
+          "CAPITALCOM:UK100": "^FTSE",
+        };
+        if (mapped[name]) {
+          return mapped[name];
+        }
+        const parts = name.split(":");
+        const ticker = parts[1] || parts[0];
+        const exchange = parts[0];
+        if (exchange === "NSE") {
+          return ticker + ".NS";
+        }
+        if (exchange === "BSE") {
+          return ticker + ".BO";
+        }
+        if (exchange === "NASDAQ" || exchange === "NYSE" || exchange === "AMEX") {
+          return ticker.replace(".", "-");
+        }
+        if (exchange === "INDEX" || exchange === "CRYPTO" || exchange === "BINANCE") {
+          return ticker.replace("USD", "-USD");
+        }
+        return ticker;
+      }
+
+      function formatPrice(value, currency) {
+        if (value == null || !Number.isFinite(Number(value))) {
+          return "—";
+        }
+        try {
+          return new Intl.NumberFormat("en-IN", {
+            style: "currency",
+            currency: currency || "INR",
+            maximumFractionDigits: Number(value) >= 100 ? 2 : 4,
+          }).format(Number(value));
+        } catch (error) {
+          return Number(value).toFixed(2);
+        }
+      }
+
+      function formatChange(value) {
+        if (value == null || !Number.isFinite(Number(value))) {
+          return "—";
+        }
+        const number = Number(value);
+        const sign = number > 0 ? "+" : "";
+        return sign + number.toFixed(2) + "%";
+      }
+
+      function sparklineSvg(values) {
+        const points = (values || []).filter(function (value) {
+          return value != null && Number.isFinite(Number(value));
+        });
+        if (points.length < 2) {
+          return "";
+        }
+        const width = 120;
+        const height = 36;
+        const min = Math.min.apply(null, points);
+        const max = Math.max.apply(null, points);
+        const span = max - min || 1;
+        const coords = points.map(function (value, index) {
+          const x = (index / (points.length - 1)) * (width - 2) + 1;
+          const y = height - 2 - ((Number(value) - min) / span) * (height - 4);
+          return x.toFixed(1) + "," + y.toFixed(1);
+        });
+        const color =
+          Number(points[points.length - 1]) >= Number(points[0])
+            ? "var(--tv-widget-positive-color)"
+            : "var(--tv-widget-negative-color)";
+        return (
+          '<svg class="watchlist-spark" viewBox="0 0 ' +
+          width +
+          " " +
+          height +
+          '" preserveAspectRatio="none" aria-hidden="true"><polyline fill="none" stroke="' +
+          color +
+          '" stroke-width="2" points="' +
+          coords.join(" ") +
+          '" /></svg>'
+        );
+      }
+
+      function renderWatchlistQuotes(list, quotes) {
+        const board = document.getElementById("watchlist-quotes");
+        if (!list.length) {
+          board.classList.add("is-empty");
+          board.innerHTML = "";
+          return;
+        }
+        board.classList.remove("is-empty");
+        const byYahoo = {};
+        (quotes || []).forEach(function (quote) {
+          if (quote && quote.yahoo) {
+            byYahoo[quote.yahoo] = quote;
+          }
+          if (quote && quote.symbol) {
+            byYahoo[quote.symbol] = quote;
+          }
+        });
+        const rows = list.map(function (item) {
+          const yahoo = toYahooSymbol(item);
+          const quote = byYahoo[yahoo] || {};
+          const up = Number(quote.changePercent) >= 0;
+          const tone = quote.price == null ? "" : up ? "watchlist-up" : "watchlist-down";
+          const status = quote.error
+            ? '<span class="watchlist-status">' + escapeHtml(quote.error) + "</span>"
+            : formatPrice(quote.price, quote.currency);
+          return (
+            "<tr><td><span class=\"watchlist-name\">" +
+            escapeHtml(item.displayName) +
+            '</span><span class="watchlist-meta">' +
+            escapeHtml(item.name) +
+            "</span></td><td class=\"" +
+            tone +
+            '">' +
+            status +
+            '</td><td class="' +
+            tone +
+            '">' +
+            formatChange(quote.changePercent) +
+            "</td><td>" +
+            formatPrice(quote.dayLow, quote.currency) +
+            "</td><td>" +
+            formatPrice(quote.dayHigh, quote.currency) +
+            "</td><td>" +
+            sparklineSvg(quote.closes) +
+            "</td></tr>"
+          );
+        });
+        board.innerHTML =
+          '<table class="watchlist-table"><thead><tr><th>Symbol</th><th>Price</th><th>Change</th><th>Low</th><th>High</th><th>1M</th></tr></thead><tbody>' +
+          rows.join("") +
+          "</tbody></table>";
+      }
+
+      async function fetchWatchlistQuotes(list) {
+        const yahooSymbols = list.map(toYahooSymbol);
+        const response = await fetch("/api/quote?symbols=" + encodeURIComponent(yahooSymbols.join(",")));
+        if (!response.ok) {
+          throw new Error("Quote request failed");
+        }
+        const payload = await response.json();
+        return payload.quotes || [];
+      }
+
+      async function mountWatchlist() {
+        const list = loadWatchlist();
+        renderWatchlistChips(list);
+        const board = document.getElementById("watchlist-quotes");
+        if (!list.length) {
+          renderWatchlistQuotes(list, []);
+          return;
+        }
+        board.classList.remove("is-empty");
+        board.innerHTML = '<p class="watchlist-status" style="padding:16px">Loading quotes…</p>';
+        try {
+          const quotes = await fetchWatchlistQuotes(list);
+          renderWatchlistQuotes(list, quotes);
+        } catch (error) {
+          board.innerHTML =
+            '<p class="watchlist-status" style="padding:16px">Could not load quotes. Serve the app with python serve.py or deploy to Vercel so /api/quote can reach Yahoo Finance.</p>';
+        }
+      }
+
+      function refreshWatchlist() {
+        mountWatchlist();
+      }
+
+      document.getElementById("watchlist-form").addEventListener("submit", function (event) {
+        event.preventDefault();
+        const input = document.getElementById("watchlist-input");
+        const symbol = normalizeSymbol(input.value);
+        if (!symbol) {
+          input.focus();
+          return;
+        }
+        const list = loadWatchlist();
+        const exists = list.some(function (item) {
+          return item.name === symbol.name;
+        });
+        if (!exists) {
+          list.push(symbol);
+          saveWatchlist(list);
+          refreshWatchlist();
+        }
+        input.value = "";
+        input.focus();
+      });
+
+      window.addEventListener("storage", function (event) {
+        if (event.key === WATCHLIST_KEY) {
+          refreshWatchlist();
+        }
+      });
+
       document.getElementById("theme-toggle").addEventListener("click", function () {
         applyTheme(getTheme() === "dark" ? "light" : "dark");
       });
 
       applyTheme(getTheme());
+      refreshWatchlist();
 
       if ("serviceWorker" in navigator && location.protocol !== "file:") {
         navigator.serviceWorker.register("./sw.js", { scope: "./" });

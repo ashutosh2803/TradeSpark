@@ -14,14 +14,15 @@ A live market dashboard for Indian indices and global markets. Charts, heatmap, 
 - Advanced Sensex chart with details, hotlist, and SMA
 - Market news, BSE hotlists, and Sensex sector heatmap
 - Technical ratings for Sensex, Nifty, Bank Nifty, and Nifty MidCap 100
+- Custom watchlist with Yahoo Finance quotes and 1-month sparkline price action, saved in this browser
 - Installable PWA with offline shell (market widgets still need a network connection)
 
 ## Run locally
 
-Open the files over HTTP. A service worker cannot register from a `file://` URL.
+Open the files over HTTP. A service worker cannot register from a `file://` URL. Use `serve.py` so the watchlist can load Yahoo Finance quotes through `/api/quote`.
 
 ```bash
-python -m http.server 8765
+python serve.py
 ```
 
 Then visit [http://127.0.0.1:8765/](http://127.0.0.1:8765/).
@@ -32,10 +33,11 @@ Serve the site over HTTP or HTTPS (not `file://`). In Chrome, install from the a
 
 ## Deploy
 
-The site is static. Any static host works (for example Vercel, Netlify, or GitHub Pages). Keep these files at the site root:
+The site is static plus one serverless quote route. Vercel will serve `api/quote.js` automatically. Keep these files at the site root:
 
 - `index.html`
 - `manifest.json`
 - `sw.js`
+- `api/quote.js`
 - `favicon.svg` / `favicon.ico`
 - `icons/`

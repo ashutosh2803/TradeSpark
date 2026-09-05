@@ -14,7 +14,7 @@ A live market dashboard for Indian indices and global markets. Charts, heatmap, 
 - Advanced Sensex chart with details, hotlist, and SMA
 - Market news, BSE hotlists, and Sensex sector heatmap
 - Technical ratings for Sensex, Nifty, Bank Nifty, and Nifty MidCap 100
-- Custom watchlist with Yahoo Finance quotes and 1-month sparkline price action, saved in this browser
+- Custom watchlist with Yahoo Finance live search, quotes, and 1-month sparkline price action, saved in this browser
 - Installable PWA with offline shell (market widgets still need a network connection)
 
 ## Run locally
@@ -39,5 +39,6 @@ The site is static plus one serverless quote route. Vercel will serve `api/quote
 - `manifest.json`
 - `sw.js`
 - `api/quote.js`
+- `api/search.js`
 - `favicon.svg` / `favicon.ico`
 - `icons/`

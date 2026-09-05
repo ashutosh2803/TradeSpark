@@ -6,7 +6,7 @@ import json
 import re
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from urllib.error import HTTPError, URLError
-from urllib.parse import parse_qs, unquote, urlparse
+from urllib.parse import parse_qs, quote, unquote, urlparse
 from urllib.request import Request, urlopen
 
 YAHOO_UA = (
@@ -80,6 +80,9 @@ class Handler(SimpleHTTPRequestHandler):
         if parsed.path.rstrip("/") == "/api/quote":
             self.handle_quote(parsed)
             return
+        if parsed.path.rstrip("/") == "/api/search":
+            self.handle_search(parsed)
+            return
         super().do_GET()
 
     def handle_quote(self, parsed) -> None:
@@ -89,6 +92,45 @@ class Handler(SimpleHTTPRequestHandler):
             self.send_json({"error": "Missing symbols"}, 400)
             return
         quotes = [fetch_yahoo(symbol) for symbol in symbols]
+        self.send_json({"quotes": quotes}, 200)
+
+    def handle_search(self, parsed) -> None:
+        query = parse_qs(parsed.query)
+        raw = unquote(query.get("q", [""])[0])
+        cleaned = re.sub(r"[^\w .&+-]", " ", raw).strip()[:40]
+        if len(cleaned) < 2:
+            self.send_json({"quotes": []}, 200)
+            return
+        url = (
+            "https://query1.finance.yahoo.com/v1/finance/search?q="
+            f"{quote(cleaned)}&quotesCount=10&newsCount=0&listsCount=0"
+        )
+        request = Request(url, headers={"User-Agent": YAHOO_UA, "Accept": "application/json"})
+        try:
+            with urlopen(request, timeout=12) as response:
+                payload = json.loads(response.read().decode("utf-8"))
+        except (HTTPError, URLError, TimeoutError, json.JSONDecodeError, ValueError):
+            self.send_json({"error": "Search unavailable"}, 502)
+            return
+        quotes = []
+        for item in payload.get("quotes") or []:
+            kind = str(item.get("quoteType") or item.get("typeDisp") or "").upper()
+            if kind in {"OPTION", "FUTURE", "CURRENCY"}:
+                continue
+            symbol = str(item.get("symbol") or "").strip()
+            if not symbol:
+                continue
+            quotes.append(
+                {
+                    "yahoo": symbol,
+                    "name": item.get("shortname") or item.get("longname") or symbol,
+                    "longName": item.get("longname") or "",
+                    "exchange": item.get("exchDisp") or item.get("exchange") or "",
+                    "type": item.get("typeDisp") or item.get("quoteType") or "",
+                }
+            )
+            if len(quotes) >= 8:
+                break
         self.send_json({"quotes": quotes}, 200)
 
     def send_json(self, payload: dict, status: int) -> None:

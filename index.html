@@ -8,13 +8,24 @@
       name="description"
       content="Trade Spark live market dashboard: Indian indices, global markets, charts, heatmap, and technicals."
     />
+    <meta name="theme-color" content="#0b0e14" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Trade Spark" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="icon" href="./favicon.ico" sizes="any" />
     <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
-    <link rel="apple-touch-icon" href="./favicon.svg" />
+    <link rel="apple-touch-icon" href="./icons/icon-180.png" />
     <script>
       (function () {
         var theme = localStorage.getItem("ts-theme") || "dark";
         document.documentElement.dataset.theme = theme;
         document.documentElement.style.colorScheme = theme;
+        var themeMeta = document.querySelector('meta[name="theme-color"]');
+        if (themeMeta) {
+          themeMeta.setAttribute("content", theme === "light" ? "#f4f7fb" : "#0b0e14");
+        }
       })();
     </script>
     <style>
@@ -422,6 +433,11 @@
         document.documentElement.dataset.theme = theme;
         document.documentElement.style.colorScheme = theme;
         localStorage.setItem(THEME_KEY, theme);
+        const themeColor = theme === "dark" ? "#0b0e14" : "#f4f7fb";
+        const metaTheme = document.querySelector('meta[name="theme-color"]');
+        if (metaTheme) {
+          metaTheme.setAttribute("content", themeColor);
+        }
         syncToggleLabel(theme);
         mountIframeWidgets(theme);
       }
@@ -607,8 +623,13 @@
         applyTheme(getTheme() === "dark" ? "light" : "dark");
       });
 
-      syncToggleLabel(getTheme());
-      mountIframeWidgets(getTheme());
+      applyTheme(getTheme());
+
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", function () {
+          navigator.serviceWorker.register("./sw.js");
+        });
+      }
     </script>
   </body>
 </html>

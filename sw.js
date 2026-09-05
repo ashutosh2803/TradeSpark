@@ -1,30 +1,24 @@
-const CACHE_NAME = "tradespark-v1";
+const CACHE_NAME = "tradespark-v2";
 const PRECACHE_URLS = [
-  "./",
   "./index.html",
-  "./manifest.webmanifest",
+  "./manifest.json",
   "./favicon.svg",
   "./favicon.ico",
-  "./icons/icon-16.png",
-  "./icons/icon-32.png",
-  "./icons/icon-48.png",
-  "./icons/icon-72.png",
-  "./icons/icon-96.png",
-  "./icons/icon-128.png",
-  "./icons/icon-144.png",
-  "./icons/icon-152.png",
-  "./icons/icon-180.png",
   "./icons/icon-192.png",
   "./icons/icon-192-maskable.png",
-  "./icons/icon-256.png",
-  "./icons/icon-384.png",
   "./icons/icon-512.png",
   "./icons/icon-512-maskable.png",
 ];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(PRECACHE_URLS)).then(() => self.skipWaiting())
+    (async () => {
+      const cache = await caches.open(CACHE_NAME);
+      await Promise.all(
+        PRECACHE_URLS.map((url) => cache.add(url).catch(() => undefined))
+      );
+      await self.skipWaiting();
+    })()
   );
 });
 

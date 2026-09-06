@@ -10,18 +10,28 @@ function parseSymbols(value) {
     .slice(0, 24);
 }
 
+function lastNumber(values) {
+  if (!Array.isArray(values)) {
+    return null;
+  }
+  for (let i = values.length - 1; i >= 0; i -= 1) {
+    const value = Number(values[i]);
+    if (values[i] != null && Number.isFinite(value)) {
+      return value;
+    }
+  }
+  return null;
+}
+
 function simplifyChart(payload, requested) {
   const result = payload && payload.chart && payload.chart.result && payload.chart.result[0];
   if (!result || !result.meta) {
     return { symbol: requested, error: "No data" };
   }
   const meta = result.meta;
-  const closes =
-    (result.indicators &&
-      result.indicators.quote &&
-      result.indicators.quote[0] &&
-      result.indicators.quote[0].close) ||
-    [];
+  const quote =
+    (result.indicators && result.indicators.quote && result.indicators.quote[0]) || {};
+  const closes = quote.close || [];
   const previous = Number(meta.chartPreviousClose);
   const price = Number(meta.regularMarketPrice);
   const changePercent =
@@ -30,16 +40,28 @@ function simplifyChart(payload, requested) {
       : previous
         ? ((price - previous) / previous) * 100
         : 0;
+  const change =
+    meta.fulldayChange != null
+      ? Number(meta.fulldayChange)
+      : Number.isFinite(price) && Number.isFinite(previous)
+        ? price - previous
+        : null;
 
   return {
     yahoo: meta.symbol || requested,
     name: meta.shortName || meta.longName || meta.symbol || requested,
+    longName: meta.longName || meta.shortName || requested,
+    exchange: meta.fullExchangeName || meta.exchangeName || "",
     currency: meta.currency || "USD",
     price: Number.isFinite(price) ? price : null,
     previousClose: Number.isFinite(previous) ? previous : null,
+    open: lastNumber(quote.open),
+    change: Number.isFinite(change) ? change : null,
     changePercent: Number.isFinite(changePercent) ? changePercent : null,
     dayHigh: meta.regularMarketDayHigh != null ? Number(meta.regularMarketDayHigh) : null,
     dayLow: meta.regularMarketDayLow != null ? Number(meta.regularMarketDayLow) : null,
+    week52High: meta.fiftyTwoWeekHigh != null ? Number(meta.fiftyTwoWeekHigh) : null,
+    week52Low: meta.fiftyTwoWeekLow != null ? Number(meta.fiftyTwoWeekLow) : null,
     volume: meta.regularMarketVolume != null ? Number(meta.regularMarketVolume) : null,
     closes: closes.filter((value) => value != null && Number.isFinite(Number(value))).map(Number),
   };

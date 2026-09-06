@@ -374,12 +374,42 @@
         font-size: 14px;
       }
 
+      .watchlist-table td:nth-child(n+2) {
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+      }
+
+      .watchlist-table td:first-child {
+        white-space: normal;
+      }
+
+      .watchlist-range {
+        min-width: 140px;
+      }
+
+      .watchlist-range-track {
+        position: relative;
+        height: 4px;
+        margin: 0 0 6px;
+        border-radius: 99px;
+        background: var(--surface-2);
+      }
+
+      .watchlist-range-marker {
+        position: absolute;
+        top: 50%;
+        width: 8px;
+        height: 8px;
+        margin: -4px 0 0 -4px;
+        border-radius: 50%;
+        background: var(--accent);
+      }
+
       .watchlist-table th,
       .watchlist-table td {
         padding: 12px 14px;
         text-align: left;
         border-bottom: 1px solid var(--border);
-        white-space: nowrap;
       }
 
       .watchlist-table th {
@@ -392,6 +422,37 @@
 
       .watchlist-table tr:last-child td {
         border-bottom: 0;
+      }
+
+      .watchlist-symbol {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 180px;
+      }
+
+      .watchlist-logo,
+      .watchlist-logo-fallback {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        flex-shrink: 0;
+        background: var(--surface-2);
+      }
+
+      .watchlist-logo {
+        object-fit: contain;
+        background: #fff;
+        border: 1px solid var(--border);
+      }
+
+      .watchlist-logo-fallback {
+        display: none;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--accent);
       }
 
       .watchlist-name {
@@ -425,11 +486,30 @@
         font-size: 13px;
       }
 
+      @media (max-width: 1100px) {
+        .watchlist-table th:nth-child(5),
+        .watchlist-table td:nth-child(5),
+        .watchlist-table th:nth-child(6),
+        .watchlist-table td:nth-child(6),
+        .watchlist-table th:nth-child(9),
+        .watchlist-table td:nth-child(9) {
+          display: none;
+        }
+      }
+
       @media (max-width: 800px) {
         .watchlist-table th:nth-child(4),
         .watchlist-table td:nth-child(4),
         .watchlist-table th:nth-child(5),
-        .watchlist-table td:nth-child(5) {
+        .watchlist-table td:nth-child(5),
+        .watchlist-table th:nth-child(6),
+        .watchlist-table td:nth-child(6),
+        .watchlist-table th:nth-child(7),
+        .watchlist-table td:nth-child(7),
+        .watchlist-table th:nth-child(8),
+        .watchlist-table td:nth-child(8),
+        .watchlist-table th:nth-child(9),
+        .watchlist-table td:nth-child(9) {
           display: none;
         }
 
@@ -989,20 +1069,44 @@
         return normalized;
       }
 
+      let quoteCache = {};
+
+      function sameWatchlistItem(a, b) {
+        return a.name === b.name || (a.yahoo && b.yahoo && a.yahoo === b.yahoo);
+      }
+
+      function paintWatchlist() {
+        const list = loadWatchlist();
+        renderWatchlistChips(list);
+        renderWatchlistQuotes(list, Object.keys(quoteCache).map(function (key) {
+          return quoteCache[key];
+        }));
+      }
+
       function addToWatchlist(symbol) {
         if (!symbol) {
           return false;
         }
         const list = loadWatchlist();
         const exists = list.some(function (item) {
-          return item.name === symbol.name || (symbol.yahoo && item.yahoo === symbol.yahoo);
+          return sameWatchlistItem(item, symbol);
         });
         if (!exists) {
           list.push(symbol);
           saveWatchlist(list);
-          refreshWatchlist();
+          paintWatchlist();
+          hydrateWatchlist([symbol]);
         }
         return true;
+      }
+
+      function removeFromWatchlist(item) {
+        const next = loadWatchlist().filter(function (entry) {
+          return !sameWatchlistItem(entry, item);
+        });
+        saveWatchlist(next);
+        delete quoteCache[toYahooSymbol(item)];
+        paintWatchlist();
       }
 
       function renderWatchlistChips(list) {
@@ -1020,11 +1124,7 @@
           remove.setAttribute("aria-label", "Remove " + item.name);
           remove.textContent = "×";
           remove.addEventListener("click", function () {
-            const next = loadWatchlist().filter(function (_, i) {
-              return i !== index;
-            });
-            saveWatchlist(next);
-            refreshWatchlist();
+            removeFromWatchlist(item);
           });
           chip.append(label, remove);
           chips.append(chip);
@@ -1101,6 +1201,62 @@
         return sign + number.toFixed(2) + "%";
       }
 
+      function formatVolume(value) {
+        if (value == null || !Number.isFinite(Number(value))) {
+          return "—";
+        }
+        return new Intl.NumberFormat("en-IN", {
+          notation: "compact",
+          maximumFractionDigits: 2,
+        }).format(Number(value));
+      }
+
+      function logoHtml(yahoo, label) {
+        const initials =
+          String(label || "?")
+            .replace(/[^A-Za-z0-9]/g, "")
+            .slice(0, 2)
+            .toUpperCase() || "?";
+        const src =
+          "https://images.financialmodelingprep.com/symbol/" +
+          encodeURIComponent(yahoo) +
+          ".png";
+        return (
+          '<img class="watchlist-logo" src="' +
+          src +
+          '" alt="" width="32" height="32" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'">' +
+          '<span class="watchlist-logo-fallback">' +
+          escapeHtml(initials) +
+          "</span>"
+        );
+      }
+
+      function weekRangeHtml(quote) {
+        if (quote.week52Low == null && quote.week52High == null) {
+          return "—";
+        }
+        const low = Number(quote.week52Low);
+        const high = Number(quote.week52High);
+        const price = Number(quote.price);
+        const span = high - low;
+        const pct =
+          Number.isFinite(price) && span > 0
+            ? Math.min(100, Math.max(0, ((price - low) / span) * 100))
+            : null;
+        return (
+          '<div class="watchlist-range">' +
+          (pct == null
+            ? ""
+            : '<div class="watchlist-range-track" aria-hidden="true"><span class="watchlist-range-marker" style="left:' +
+              pct.toFixed(1) +
+              '%"></span></div>') +
+          formatPrice(quote.week52Low, quote.currency) +
+          " – " +
+          formatPrice(quote.week52High, quote.currency) +
+          "</div>"
+        );
+      }
+
       function sparklineSvg(values) {
         const points = (values || []).filter(function (value) {
           return value != null && Number.isFinite(Number(value));
@@ -1157,38 +1313,61 @@
           const quote = byYahoo[yahoo] || {};
           const up = Number(quote.changePercent) >= 0;
           const tone = quote.price == null ? "" : up ? "watchlist-up" : "watchlist-down";
+          const title = quote.longName || quote.name || item.displayName;
           const status = quote.error
             ? '<span class="watchlist-status">' + escapeHtml(quote.error) + "</span>"
             : formatPrice(quote.price, quote.currency);
+          const changeLabel =
+            quote.price == null
+              ? "—"
+              : (Number(quote.change) > 0 ? "+" : "") +
+                formatPrice(quote.change, quote.currency) +
+                " (" +
+                formatChange(quote.changePercent) +
+                ")";
           return (
-            "<tr><td><span class=\"watchlist-name\">" +
-            escapeHtml(item.displayName) +
+            "<tr><td><div class=\"watchlist-symbol\">" +
+            logoHtml(yahoo, title) +
+            "<div><span class=\"watchlist-name\">" +
+            escapeHtml(title) +
             '</span><span class="watchlist-meta">' +
             escapeHtml(item.name) +
-            "</span></td><td class=\"" +
+            (quote.exchange ? " · " + escapeHtml(quote.exchange) : "") +
+            "</span></div></div></td><td class=\"" +
             tone +
             '">' +
             status +
             '</td><td class="' +
             tone +
             '">' +
-            formatChange(quote.changePercent) +
+            changeLabel +
+            "</td><td>" +
+            formatPrice(quote.open, quote.currency) +
+            "</td><td>" +
+            formatPrice(quote.previousClose, quote.currency) +
             "</td><td>" +
             formatPrice(quote.dayLow, quote.currency) +
             "</td><td>" +
             formatPrice(quote.dayHigh, quote.currency) +
+            "</td><td>" +
+            formatVolume(quote.volume) +
+            "</td><td>" +
+            weekRangeHtml(quote) +
             "</td><td>" +
             sparklineSvg(quote.closes) +
             "</td></tr>"
           );
         });
         board.innerHTML =
-          '<table class="watchlist-table"><thead><tr><th>Symbol</th><th>Price</th><th>Change</th><th>Low</th><th>High</th><th>1M</th></tr></thead><tbody>' +
+          '<table class="watchlist-table"><thead><tr><th>Symbol</th><th>Price</th><th>Change</th><th>Open</th><th>Prev close</th><th>Low</th><th>High</th><th>Volume</th><th>52W</th><th>1M</th></tr></thead><tbody>' +
           rows.join("") +
           "</tbody></table>";
       }
 
       async function fetchWatchlistQuotes(list) {
+        if (!list.length) {
+          return [];
+        }
         const yahooSymbols = list.map(toYahooSymbol);
         const response = await fetch("/api/quote?symbols=" + encodeURIComponent(yahooSymbols.join(",")));
         if (!response.ok) {
@@ -1198,27 +1377,47 @@
         return payload.quotes || [];
       }
 
-      async function mountWatchlist() {
+      async function hydrateWatchlist(itemsToFetch) {
         const list = loadWatchlist();
-        renderWatchlistChips(list);
+        const targets = itemsToFetch || list.filter(function (item) {
+          return !quoteCache[toYahooSymbol(item)];
+        });
         const board = document.getElementById("watchlist-quotes");
         if (!list.length) {
-          renderWatchlistQuotes(list, []);
+          paintWatchlist();
           return;
         }
-        board.classList.remove("is-empty");
-        board.innerHTML = '<p class="watchlist-status" style="padding:16px">Loading quotes…</p>';
+        const hasCached = list.some(function (item) {
+          return quoteCache[toYahooSymbol(item)];
+        });
+        if (!hasCached) {
+          board.classList.remove("is-empty");
+          board.innerHTML = '<p class="watchlist-status" style="padding:16px">Loading quotes…</p>';
+        } else {
+          paintWatchlist();
+        }
+        if (!targets.length) {
+          return;
+        }
         try {
-          const quotes = await fetchWatchlistQuotes(list);
-          renderWatchlistQuotes(list, quotes);
+          const quotes = await fetchWatchlistQuotes(targets);
+          quotes.forEach(function (quote) {
+            const key = quote.yahoo || quote.symbol;
+            if (key) {
+              quoteCache[key] = quote;
+            }
+          });
+          paintWatchlist();
         } catch (error) {
-          board.innerHTML =
-            '<p class="watchlist-status" style="padding:16px">Could not load quotes. Serve the app with python serve.py or deploy to Vercel so /api/quote can reach Yahoo Finance.</p>';
+          if (!hasCached) {
+            board.innerHTML =
+              '<p class="watchlist-status" style="padding:16px">Could not load quotes. Serve the app with python serve.py or deploy to Vercel so /api/quote can reach Yahoo Finance.</p>';
+          }
         }
       }
 
       function refreshWatchlist() {
-        mountWatchlist();
+        hydrateWatchlist();
       }
 
       const input = document.getElementById("watchlist-input");
@@ -1384,7 +1583,7 @@
       });
 
       applyTheme(getTheme());
-      refreshWatchlist();
+      hydrateWatchlist();
 
       if ("serviceWorker" in navigator && location.protocol !== "file:") {
         navigator.serviceWorker.register("./sw.js", { scope: "./" });

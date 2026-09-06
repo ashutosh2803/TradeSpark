@@ -29,6 +29,19 @@ def parse_symbols(value: str) -> list[str]:
     return symbols
 
 
+def last_number(values):
+    if not isinstance(values, list):
+        return None
+    for value in reversed(values):
+        if value is None:
+            continue
+        try:
+            return float(value)
+        except (TypeError, ValueError):
+            continue
+    return None
+
+
 def simplify_chart(payload: dict, requested: str) -> dict:
     try:
         result = payload["chart"]["result"][0]
@@ -36,25 +49,32 @@ def simplify_chart(payload: dict, requested: str) -> dict:
     except (KeyError, IndexError, TypeError):
         return {"symbol": requested, "error": "No data"}
 
-    closes = (
-        (((result.get("indicators") or {}).get("quote") or [{}])[0].get("close"))
-        or []
-    )
+    quote = (((result.get("indicators") or {}).get("quote") or [{}])[0]) or {}
+    closes = quote.get("close") or []
     previous = meta.get("chartPreviousClose")
     price = meta.get("regularMarketPrice")
-    change = meta.get("regularMarketChangePercent")
-    if change is None and previous and price:
-        change = ((price - previous) / previous) * 100
+    change_pct = meta.get("regularMarketChangePercent")
+    if change_pct is None and previous and price:
+        change_pct = ((price - previous) / previous) * 100
+    change = meta.get("fulldayChange")
+    if change is None and previous is not None and price is not None:
+        change = price - previous
 
     return {
         "yahoo": meta.get("symbol") or requested,
         "name": meta.get("shortName") or meta.get("longName") or requested,
+        "longName": meta.get("longName") or meta.get("shortName") or requested,
+        "exchange": meta.get("fullExchangeName") or meta.get("exchangeName") or "",
         "currency": meta.get("currency") or "USD",
         "price": price,
         "previousClose": previous,
-        "changePercent": change,
+        "open": last_number(quote.get("open")),
+        "change": change,
+        "changePercent": change_pct,
         "dayHigh": meta.get("regularMarketDayHigh"),
         "dayLow": meta.get("regularMarketDayLow"),
+        "week52High": meta.get("fiftyTwoWeekHigh"),
+        "week52Low": meta.get("fiftyTwoWeekLow"),
         "volume": meta.get("regularMarketVolume"),
         "closes": [float(value) for value in closes if value is not None],
     }
